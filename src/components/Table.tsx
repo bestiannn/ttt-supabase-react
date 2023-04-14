@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { supabase } from '../services/supabase';
 
 const Table = () => {
     const [gameState, setGameState] = useState(Array(9).fill(null));
@@ -8,6 +9,19 @@ const Table = () => {
         newGameState[index] = "X";
         setGameState(newGameState);
     }
+
+    useEffect(() => {
+        const channel = supabase.channel('any')
+        channel
+            .on('presence', { event: 'sync' }, () => {
+                console.log('Synced presence state: ', channel.presenceState())
+            })
+            .subscribe(async (status: string) => {
+                if (status === 'SUBSCRIBED') {
+                    await channel.track({ online_at: new Date().toISOString() })
+                }
+            })
+    }, [])
 
     return (
         <div className="w-full text-center flex-1 grid grid-cols-3 grid-rows-3 gap-1 bg-black">
