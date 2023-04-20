@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 const Table = () => {
     const [gameState, setGameState] = useState(Array(9).fill(null));
 
-    const handleClick = (index: number) => {
+    const handleClick = (index) => {
         const newGameState = [...gameState];
         newGameState[index] = "X";
         setGameState(newGameState);
@@ -16,7 +16,7 @@ const Table = () => {
             .on('presence', { event: 'sync' }, () => {
                 console.log('Synced presence state: ', channel.presenceState())
             })
-            .subscribe(async (status: string) => {
+            .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {
                     await channel.track({ online_at: new Date().toISOString() })
                 }
