@@ -3,25 +3,25 @@ import { supabase } from '../services/supabase';
 
 const Table = () => {
     const [gameState, setGameState] = useState(Array(9).fill(null));
+    const channel = supabase.channel('test', {
+        config: {
+          broadcast: {
+            self: true,
+          },
+        },
+      });      
 
-    const handleClick = (index) => {
+    const handleClick = async(index) => {
         const newGameState = [...gameState];
         newGameState[index] = "X";
         setGameState(newGameState);
     }
 
     useEffect(() => {
-        const channel = supabase.channel('any')
-        channel
-            .on('presence', { event: 'sync' }, () => {
-                console.log('Synced presence state: ', channel.presenceState())
-            })
-            .subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await channel.track({ online_at: new Date().toISOString() })
-                }
-            })
-    }, [])
+        channel.on('broadcast', { event: 'supa' } , (payload) => {
+            console.log("lol:", payload);
+        }).subscribe();
+    }, []);
 
     return (
         <div className="w-full text-center flex-1 grid grid-cols-3 grid-rows-3 gap-1 bg-black">
