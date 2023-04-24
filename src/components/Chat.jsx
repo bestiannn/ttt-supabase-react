@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { channel } from '../services/supabase';
+import { channel, supabase } from '../services/supabase';
 
 const Chat = () => {
     const [messages, setMessages] = useState([])
@@ -12,10 +12,10 @@ const Chat = () => {
                 type: 'broadcast',
                 event: 'message',
                 payload: {
+                    user: 'user',
                     content: message,
                 },
             })
-
             setMessage('')
         }
     }
@@ -34,7 +34,7 @@ const Chat = () => {
         <div>
             <ul>
                 {messages.map((message, index) => (
-                    <li key={index}>{message.payload.content}</li>
+                    <li key={index}>{message.payload.user}:{message.payload.content}</li>
                 ))}
             </ul>
             <form onSubmit={handleSend}>
